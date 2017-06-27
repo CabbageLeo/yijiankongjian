@@ -6,7 +6,8 @@
         singleorder:"",
       //用于请求数据时验证身份
       account_id:"",
-      singleOrderId:""
+      singleOrderId:"",
+      userdata:""
     },
     pagecode:"",
     //翻译status码
@@ -37,7 +38,12 @@
         "900": "订单已取消"
       }[statuscode]
       return statuscode
-      console.log(statuscode,"燚")
+    },
+    //生成列表序号
+    setindex:function (index) {
+        for(var i=0;i<$(index).length;i++){
+            $(index).eq(i).text(i+1)
+        }
     },
     //材料类型翻译
     materialtranslate:function (mat) {
@@ -117,6 +123,20 @@
         "id":24007
       }
       this.getdata('account.json', data, callback);
+    },
+    //取得账户信息
+    getuserdata:function (id,callback) {
+        var that=this
+      var dt={
+        "jsonrpc": "2.0",
+        "method": "getAccount",
+        "params": {
+          "accountId":id
+        },
+        "auth": "",
+        "id":21004
+      }
+      this.getdata("account.json",dt,callback)
     },
     //取得订单列表 status：1=未完成 2=已完成 3=已结算 0=所有，keywords：搜索关键词
     getorderlist: function(status, keywords,accountid, callback){

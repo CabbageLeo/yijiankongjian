@@ -6,7 +6,7 @@
       <table class="basic_inf">
         <tr>
           <td>订单编号</td>
-          <td>{{}}</td>
+          <td>{{singleorder.order_id}}</td>
           <td>项目经理</td>
           <td>{{singleorder.info.pmname}}</td>
         </tr>
@@ -56,12 +56,12 @@
         </tr>
       </table>
       <div class="order_info">
-        <p>订单备注:<span>{{}}</span></p>
-        <div><img src="" alt=""><img src="" alt=""><img src="" alt=""></div>
+        <p>订单备注:<span>{{singleorder.order_desc}}</span></p>
+        <div><img v-for="data in singleorder.photoList" :src="data.photoAddress" alt=""></div>
       </div>
       <div class="detail_info">
-        <p>明细备注:<span>{{}}</span></p>
-        <div><img src="" alt=""><img src="" alt=""><img src="" alt=""></div>
+        <p>明细备注:<span>{{singleorder.source_detail}}</span></p>
+        <div><img :src="data.photoAddress" alt="" v-for="data in singleorder.detailList"></div>
       </div>
       <div class="buttons">
         <button style="background: #4e6994;">打印订单</button>
@@ -71,12 +71,12 @@
     <div class="order_process" >
       <div class="titlebar">订单状态更新进度</div>
       <div class="msg" v-for="data in singleorder.logs">
-        <img src="" alt="" class="photo">
+        <img :src="imagelocation(data.head_image)" alt="" class="photo">
         <div class="photolayer"><img src="" alt=""></div>
-        <div class="name">name</div>
+        <div class="name">{{data.user_name}}</div>
         <div class="date">date</div>
-        <div class="operation">操作</div>
-        <div class="info">备注:info<img src="../../static/img/msgbubble_angular.png" alt=""></div>
+        <div class="operation">{{statustranslate(data.opt_item)}}</div>
+        <div class="info">备注:{{data.description}}<img src="../../static/img/msgbubble_angular.png" alt=""></div>
       </div>
     </div>
   </div>
@@ -91,7 +91,10 @@
         }
       },
     methods:{
-          photoview:function (imgul) {
+      statustranslate:function (sta) {
+        return global.statustransform(sta)
+      } ,
+      photoview:function (imgul) {
             $("#order_detail .photolayer").attr("src",data)
             $("#order_detail .photolayer").fadeIn()
           },
@@ -100,13 +103,14 @@
       },
       statustranslate:function (data) {
         return global.statustransform(data)
+      },
+      //图片地址拼接
+      imagelocation:function (url) {
+        return "http://test.yjzone.cn/homeimage"+url
       }
     },
     beforeMount:function () {
           this.singleorder==""?window.location.href="/order_detail":""
-      /*
-            this.detail_table=this.singleorder.result.matlist
-      */
     },
     mounted:function () {
     }
@@ -137,7 +141,7 @@
     border-radius:4px;
     width: 100%;
     padding: 0 48px;
-    height: 331px;
+    min-height: 331px;
     background: #FFF;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -187,7 +191,7 @@
     height: 60px;
     color: #dcdcdc;}
   #order_detail .detail_info p{
-    text-indent: -323px !important;}
+    clear: both;}
   #order_detail .order_info img,#order_detail .detail_info img{
     display: block;
     width: 88px;
@@ -217,6 +221,7 @@
     font-size: 18px;
     text-shadow: 0 0 1px #f89354;}
   #order_detail .order_process .msg{
+    clear: both;
     text-align: left;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -257,7 +262,7 @@
     padding: 0 15px;
     position: absolute;
     top: 16px;
-    left: 204px;}
+    left: 50%;}
   #order_detail .order_process .msg .info img{
     position: absolute;
     right: 100%;

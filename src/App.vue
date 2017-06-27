@@ -3,9 +3,13 @@
     <div id="topbar">
       <h1><img src="../static/img/logo_interface.png" alt=""></h1>
       <div class="userinfo">
-        <img src="" alt="" class="photo">
-        <p class="username">{{this.userinfo.username}}</p>
+        <img :src="userinfo.headImage" alt="" class="photo">
+        <p class="username">{{userinfo.userName}}</p>
         <img src="../static/img/arrow.png" alt="" class="arrow">
+        <ul class="options">
+          <li>修改</li>
+          <li>登出</li>
+        </ul>
       </div>
     </div>
     <div id="main">
@@ -48,20 +52,25 @@ export default {
           link:"/account_edit"
         }
       ],
-      userinfo:{
-          username:"username"
-      }
+      userinfo:""
     }
   },
   methods:{
   },
   beforeMount:function () {
+    var that=this
     localStorage.setItem("idstation",53)
     localStorage.getItem("idstation")==""?window.location.href="login.html":""
     global.database.account_id=localStorage.getItem("idstation")
     localStorage.setItem("idstation","")
+    global.getuserdata(global.database.account_id,function (data) {
+      data.result.headImage=global.IMAGE_URL+data.result.headImage
+      that.userinfo=data.result
+      global.database.user_data=data.result
+    })
   },
   mounted:function () {
+    //左侧选项样式初始化
     $("#leftbar div").siblings().css({background:"none"})
     $("#leftbar div").eq(global.pagecode).css({background:"#FFF"})
     //尺寸适应
@@ -142,6 +151,7 @@ global.getorderlist(0,"",global.database.account_id,function (data) {
     align-items: center;
   }
   #topbar .userinfo{
+    position: relative;
     float: right;
     height: 100%;}
   #topbar .userinfo .photo{
@@ -153,6 +163,28 @@ global.getorderlist(0,"",global.database.account_id,function (data) {
   #topbar .username{
     color: #FFF;
     margin-right:5px;}
+  #topbar .options{
+    display: none;
+    transition:all 1s linear;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    z-index: 1;
+    box-shadow: 1px 1px 2px 0 rgba(0,0,0,0.4)}
+  #topbar .userinfo:hover .options{
+    display: block;}
+  #topbar .options li{
+    list-style-type: none;
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    font-size: 20px;
+    transition:all 0.5s linear;
+    background: #fff;}
+  #topbar .options li:hover{
+    background: red;
+    color: #fff;}
   #rightbar{
     background: #a0a0a0;
     -webkit-box-sizing: border-box;

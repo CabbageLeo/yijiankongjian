@@ -1,8 +1,8 @@
 <template>
   <div id="account_edit">
     <div class="editor">
-      <img src="" alt="" class="userphoto">
-      <p class="account">账号<span>  123456789101</span></p>
+      <img :src="userinfo.headImage" alt="" class="userphoto">
+      <p class="account">账号<span>  {{userinfo.mobile}}</span></p>
       <input type="text" class="username" placeholder="姓名">
       <input type="text" onfocus="this.type='passwod'" class="password"placeholder="密码">
       <div class="buttons">
@@ -15,10 +15,22 @@
 </template>
 <script>
   import global from "./global.vue"
+  import app from "../App.vue"
   export default{
       name:"account_edit",
+    data:function () {
+      return{
+          userinfo:""
+      }
+    },
       beforeMount:function () {
-          global.pagecode=2
+        var that=this
+        global.pagecode=2
+        global.getuserdata(global.database.account_id,function (data) {
+          data.result.headImage=global.IMAGE_URL+data.result.headImage
+          that.userinfo=data.result
+          console.log(that.userinfo)
+        })
     },
     mounted:function () {
           setTimeout(function () {
