@@ -20,11 +20,11 @@
           <td>施工地址</td>
           <td>{{singleorder.work_address}}</td>
           <td>施工金额</td>
-          <td>{{}}</td>
+          <td>￥{{singleorder.amount}}</td>
         </tr>
         <tr>
           <td>发货日期</td>
-          <td>{{}}</td>
+          <td>{{singleorder.start_date}}</td>
           <td>订单状态</td>
           <td>{{statustranslate(singleorder.status)}}</td>
         </tr>
@@ -32,7 +32,7 @@
       <div class="titlebar">订单明细表</div>
       <table class="detail_table">
         <tr>
-          <td>序号</td>
+          <td >序号</td>
           <td>材料名称</td>
           <td>品牌</td>
           <td>型号</td>
@@ -42,7 +42,7 @@
           <td>合计</td>
         </tr>
         <tr v-for="data in detail_table">
-          <td>{{data.no}}</td>
+          <td class="no">{{data.no}}</td>
           <td>{{data.mateName}}</td>
           <td>{{data.brand}}</td>
           <td>{{data.model}}</td>
@@ -64,7 +64,7 @@
         <div><img :src="data.photoAddress" alt="" v-for="data in singleorder.detailList"></div>
       </div>
       <div class="buttons">
-        <button style="background: #4e6994;">打印订单</button>
+        <button style="background: #4e6994;" @click="print">打印订单</button>
         <button style="background: #f89354;">导出订单</button>
       </div>
     </div>
@@ -107,12 +107,18 @@
       //图片地址拼接
       imagelocation:function (url) {
         return "http://test.yjzone.cn/homeimage"+url
+      },
+      //打印
+      print:function () {
+          console.log()
+        $("#order_detail .order_data").jqprint()
       }
     },
     beforeMount:function () {
-          this.singleorder==""?window.location.href="/order_detail":""
+          this.singleorder==""?window.location.href="./index.html":""
     },
     mounted:function () {
+          global.setindex("#order_detail .no")
     }
   }
 </script>

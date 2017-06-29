@@ -6,13 +6,18 @@
         <div class="cell">
           <p>材料类型</p>
           <select class="select1">
-            <option value="">选择材料类型</option>
+            <option value="">-</option>
+            <option value="">木工</option>
+            <option value="">瓦工</option>
+            <option value="">水电</option>
+            <option value="">油漆</option>
+            <option value="">综合</option>
           </select>
         </div>
         <div class="cell">
           <p>供应商</p>
           <select class="select2">
-            <option value="">选择供应商</option>
+            <option value="" v-for="data in suplist">{{data.matName}}</option>
           </select>
         </div>
         <div class="cell">
@@ -23,9 +28,8 @@
         </div>
         <div class="cell">
           <p>送货日期</p>
-          <select class="select4">
-            <option value="">选择送货日期</option>
-          </select>
+          <input class="select4" id="date" style="width: 160px;" readonly="readonly">
+
         </div>
       </div>
       <div class="mats">
@@ -99,18 +103,55 @@
   import global from "./global.vue"
   export default{
       name:"create_new_order",
+    data:function () {
+          return{
+              suplist:"",
+          }
+    },
       methods:{
           cancelcreating:function () {
             alert(1)
             window.location.href="/"
           }
       },
+    befoereMount:function () {
+    },
     mounted:function () {
-/*
-      $(".cell select").dropkick({
-        mobile:true
+      var that=this
+      //日历插件加载
+      var cdr=xvDate({
+        targetId:"date",
+        hms:"off"
       })
-*/
+      //根据选择动态加载供应商列表
+      $(".part1 .cell select").eq(0).change(function (e) {
+        var url="http://test.yjzone.cn/home/account.json"
+        var data={
+          "jsonrpc": "2.0",
+          "method": "findMateEntsByCat",
+          "params": {
+            "categoryId":e.currentTarget.selectedIndex
+          },
+          "auth": "",
+          "id":24010
+        }
+        $.ajax({
+          type: 'POST',
+          url:  url,
+          data: JSON.stringify(data),
+          contentType: 'text/plain;charset=UTF-8',
+          success: function (data) {
+              that.suplist=data.result.dataList
+            console.log(that.suplist)
+          },
+          dataType: 'json'
+        });
+      })
+      /*
+            $(".cell select").dropkick({
+              mobile:true
+            })
+      */
     }
   }
 </script>
@@ -256,5 +297,6 @@
     width: 100%;
     height: 290px;
     overflow: auto;}
-
+  li{
+    list-style-type: none!important;}
 </style>

@@ -5,7 +5,7 @@
       <div class="createorder">新建订单<router-link to="/order_center/create_new_order"></router-link></div>
       <div class="searchorder">
         <input type="text" name="" id="">
-        <div class="startsearch"><img src="../../static/img/startsearch.png" alt=""></div>
+        <div class="startsearch" @mousedown="startsearch"><img src="../../static/img/startsearch.png" alt=""></div>
       </div>
     </div>
     <ul class="tablelist">
@@ -26,7 +26,7 @@
         <div class="tr1">
           <div class="ordernumber">NO.</div>
           <div class="orderdate">{{data.start_date}}</div>
-          <div class="orderid">订单号{{data.create_tim}}</div>
+          <div class="orderid">订单号{{data.order_id}}</div>
         </div>
         <div class="tr2">
           <div class="location" :title="data.work_address">{{data.work_address}}</div>
@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="tablecount">订单总数：{{orderdata.length}}单，待处理订单：2单</div>
+    <div class="tablecount">订单总数：{{totalordercount}}单，待处理订单：{{uncompordercount}}单</div>
     <div class="pagination">
       <div class="leftarrow"><img src="../../static/img/pagination_leftarrow.png" alt=""></div>
       <div class="rightarrow"><img src="../../static/img/pagination_rightarrow.png" alt=""></div>
@@ -83,6 +83,8 @@
             }
           ],
         orderdata:"",
+        totalordercount:"",
+        uncompordercount:""
       }
     },
     methods:{
@@ -92,6 +94,9 @@
       },
       transformmat:function (mat) {
         return global.materialtranslate(mat)
+      },
+      translateTime:function (tim) {
+        return global.translateTime(tim)
       },
       //顶部选项卡切换操作
       tablecardclick:function (sta) {
@@ -109,6 +114,16 @@
             console.log(global.database.singleorder)
           })
       },
+      //订单搜索
+      startsearch:function () {
+          var that=this
+        global.getorderlist(0,$('#order_center .searchorder input').val(),global.database.account_id,function (data) {
+          if (data.result.dataList==null){
+            data.result.dataList=[]}
+          that.orderdata=data.result.dataList
+          $("#order_center .tablelist li").removeClass("selected")
+        })
+      }
     },
     beforeMount:function () {
       //设置订单列表初始化状态
@@ -119,6 +134,13 @@
           data.result.dataList=[]}
         that.orderdata=data.result.dataList
       })
+      //下方的未完成数量计数
+      global.getorderlist(0,"",global.database.account_id,function (data) {
+        that.totalordercount=data.result.dataList.length
+      })
+      global.getorderlist(1,"",global.database.account_id,function (data) {
+        that.uncompordercount=data.result.dataList.length
+      })
     },
     mounted:function () {
           //顶部选项卡切换UI效果
@@ -127,8 +149,8 @@
             $(e.currentTarget).addClass("selected")
           })
     },
-    updeted:function () {
-
+    updated:function () {
+      global.setindex("#order_center .ordernumber")
     }
   }
 </script>
@@ -188,10 +210,13 @@
     line-height: 42px;
     font-size: 20px;
     padding-left: 41px;}
-  #order_center_titlebar .startsearch{
+  #order_center_titlebar .startsearch{transition:all 0.5s;
+    cursor: pointer;
     position: absolute;
     left: 1px;
-    top: 1px;}
+    top: 1px;
+    transform:scale(0.9)}
+  #order_center_titlebar .startsearch:hover{transform:scale(1)}
   #order_center .tablelist{
     width: 100%;
     height: 35px;}

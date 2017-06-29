@@ -7,8 +7,8 @@
         <p class="username">{{userinfo.userName}}</p>
         <img src="../static/img/arrow.png" alt="" class="arrow">
         <ul class="options">
-          <li>修改</li>
-          <li>登出</li>
+          <li>修改<router-link to="account_edit"></router-link></li>
+          <li @click="unload">登出</li>
         </ul>
       </div>
     </div>
@@ -52,15 +52,19 @@ export default {
           link:"/account_edit"
         }
       ],
-      userinfo:""
+      userinfo:"",
     }
   },
   methods:{
+      unload:function () {
+        localStorage.setItem("account_id","")
+        window.location.href="./login.html"
+      }
   },
   beforeMount:function () {
     var that=this
     localStorage.setItem("idstation",53)
-    localStorage.getItem("idstation")==""?window.location.href="login.html":""
+    localStorage.getItem("idstation")==""?window.location.href="./login.html":""
     global.database.account_id=localStorage.getItem("idstation")
     localStorage.setItem("idstation","")
     global.getuserdata(global.database.account_id,function (data) {
@@ -88,12 +92,14 @@ global.getorderlist(0,"",global.database.account_id,function (data) {
     $("#leftbar div").siblings().css({background:"none"})
     $("#leftbar div").eq(global.pagecode).css({background:"#FFF"})
     $("#app").css({backgroundImage:"none"})
+    $(".pagination").hide()
   }
 }
 </script>
 
 <style>
 #app {
+  font-size: 16px;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -181,7 +187,15 @@ global.getorderlist(0,"",global.database.account_id,function (data) {
     line-height: 30px;
     font-size: 20px;
     transition:all 0.5s linear;
-    background: #fff;}
+    background: #fff;
+    cursor: pointer;
+    position: relative;}
+  #topbar .options li a{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;}
   #topbar .options li:hover{
     background: red;
     color: #fff;}

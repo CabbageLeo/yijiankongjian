@@ -42,13 +42,17 @@
     //生成列表序号
     setindex:function (index) {
         for(var i=0;i<$(index).length;i++){
-            $(index).eq(i).text(i+1)
+            $(index).eq(i).text("no."+(i+1))
         }
     },
     //材料类型翻译
     materialtranslate:function (mat) {
       mat=['木工','瓦工','水电','油漆','综合'][mat-1]
       return mat
+    },
+    //时间戳转换
+    translateTime:function (tim) {
+      return new Date(tim).toString().substring(4,15)
     },
     //ajax封装
     SERVER_URL: "http://test.yjzone.cn/home/",

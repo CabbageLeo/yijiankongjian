@@ -6,8 +6,8 @@
       <input type="text" class="username" placeholder="姓名">
       <input type="text" onfocus="this.type='passwod'" class="password"placeholder="密码">
       <div class="buttons">
-        <button class="complate">保存</button>
-        <button class="cancel">取消</button>
+        <div @click="editaccount"class="complate">保存</div>
+        <div onclick="window.history.back()"class="cancel" >取消</div>
       </div>
       <p class="ver">信息版本：一键空间 V1.0 内测版 </p>
     </div>
@@ -21,6 +21,40 @@
     data:function () {
       return{
           userinfo:""
+      }
+    },
+    methods:{
+      editaccount:function () {
+          if(/^[\w\d\u4e00-\u9fa5]{3,8}$/.test($("#account_edit .username").val().trim())!=true/*||/^[\w\d]{8,128}$/.test($("#account_edit .password").val().trim())!=true*/){alert("请使用长度为3-8位的用户名和8位以上的密码")}else {
+            if(confirm("确认要修改账户信息?")==true){
+              global.login(this.userinfo.mobile,$("#account_edit .password").val().trim(),function (data) {
+                  if(data.result.errcode!=0){alert("密码有误,请检查后重新输入")}else{              var dt1={
+                    "jsonrpc": "2.0",
+                    "method": "modifyAccount",
+                    "params": {
+                      "accountId":global.database.account_id,
+                      "userName":$("#account_edit .username").val(),
+                      "sex":"1",
+                      "birthDay":"1",
+                      "email":"1",
+                      "address":"1",
+                      "provinceId":"1",
+                      "provinceName":"1",
+                      "cityId":"1",
+                      "cityName":"1",
+                      "regionId":"1",
+                      "regionName":"1"
+                    },
+                    "auth": "",
+                    "id":21003
+                  }
+                  global.getdata("account.json",dt1,function (data) {
+                    window.location=self
+                  })
+                  }
+              })
+            }else{}
+          }
       }
     },
       beforeMount:function () {
@@ -92,7 +126,9 @@
     margin-bottom: 20px;
     text-shadow: 0 0 1px rgba(0,0,0,0.4);
     outline: none;}
-  #account_edit .editor .buttons button{
+  #account_edit .editor .buttons div{
+    display: inline-block;
+    line-height: 44px;
     width: 150px;
     height: 44px;
     border-radius:4px;
